@@ -71,21 +71,24 @@ def prepare_data(data: list) -> dict:
 if __name__ == '__main__':
     languages_data = [('ita', 'italian_data.txt'), ('en', 'english_data.txt'), ('pt', 'portuguese_data.txt')]
     lang_data = prepare_data(languages_data)
-    print(lang_data['ita'])
-    print(statistics(lang_data['ita']))
+    # print(lang_data['ita'])
+    # print(statistics(lang_data['ita']))
 
     lang_data_dict = {}
     for data_lang, content in lang_data.items():
         lang_data_dict[data_lang] = preprocess(content)
-    print(lang_data_dict['ita'])
+    print(lang_data_dict)
 
-    unique_words = {}
-    for data_lang, content in lang_data_dict.items():
-        unique_words[data_lang] = get_unique_words(content)
-    print(unique_words)
-    print(len(unique_words['ita']))
-
+    # unique_words = {}
+    # for data_lang, content in lang_data_dict.items():
+    #     unique_words[data_lang] = get_unique_words(content)
+    # print(unique_words)
+    # print(len(unique_words['ita']))
+    #
     print('stats before')
-    print(statistics(lang_data['ita']))
+    for l in lang_data.keys():
+        print(statistics(lang_data[l]))
+    print('********************')
     print('stats after')
-    print(statistics(lang_data_dict['ita']))
+    for l in lang_data.keys():
+        print(statistics(lang_data_dict[l]))
