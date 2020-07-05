@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import text_handling
 
 
-def naive_bayes_model(training_data: dict, validation_data: dict):
+def train_data(training_data: dict):
     # vectorizing training data
     training_labels, training_sentences = [], []
     for language, sentences in training_data.items():
@@ -20,31 +20,47 @@ def naive_bayes_model(training_data: dict, validation_data: dict):
     naive_classifier = MultinomialNB()
     naive_classifier.fit(training_vectors, training_labels)
 
+    return vectorizer, naive_classifier
+
+
+def predict(validation_data: dict, trained_vectorizer, naive_classifier):
     # vectorizing validation data
     validation_labels, validation_sentences = [], []
     for language, sentences in validation_data.items():
         for sentence in sentences:
             validation_sentences.append(sentence)
             validation_labels.append(language)
-    validation_vectors = vectorizer.transform(validation_sentences)
+    validation_vectors = trained_vectorizer.transform(validation_sentences)
 
     # predict
     predictions = naive_classifier.predict(validation_vectors)
 
-    # todo fix visualisation of the results
+    return validation_labels, validation_vectors, predictions
 
-    res = confusion_matrix(validation_sentences, predictions)
+
+# todo refactor and finish show_stats
+def show_stats(validation_labels, validation_vectors, predictions, naive_classifier):
+    print('f1 score: ', f1_score(validation_labels, predictions, average='weighted'))
+
+    # res = confusion_matrix(validation_sentences, predictions)
     # print('Resutls')
     # print(res)
-    # print('Accuracy score: ', accuracy_score(validation_sentences,predictions))
-    print('f1 score: ', f1_score(validation_labels, predictions, average='weighted'))
-    # plt.figure()
-    # conf_mx = confusion_matrix(validation_labels, predictions, ['ita', 'en', 'pt'])
-    fig = plt.figure()
-    plt.plot(res)
-    plt.show()
 
-    return predictions
+    # plt.figure()
+    # plot_confusion_matrix(naive_classifier, validation_vectors, predictions)
+    # plt.show()
+
+
+def count_probabilities(predictions):
+    occurrences = {}
+    for language in predictions:
+        if language in occurrences.keys():
+            occurrences[language] += 1
+        else:
+            occurrences[language] = 1
+
+    probabilities = {k: v / sum(list(occurrences.values())) for k, v in occurrences.items()}
+    return probabilities
 
 
 if __name__ == '__main__':
@@ -52,8 +68,7 @@ if __name__ == '__main__':
     lang_data = text_handling.prepare_data(languages_data)
     lang_data_dict = {}
 
-    validation_languages_data = [('ita', 'italian_validation_data.txt'), ('en', 'english_validation_data.txt'),
-                                 ('pt', 'portuguese_validation_data.txt')]
+    validation_languages_data = [('ita', 'italian_validation_data.txt')]
     validation_lang_data = text_handling.prepare_data(validation_languages_data)
     validation_lang_data_dict = {}
 
@@ -65,4 +80,10 @@ if __name__ == '__main__':
         validation_lang_data_dict[validation_data_lang] = text_handling.preprocess(validation_content)
     # print(validation_lang_data_dict)
 
-    naive_bayes_model(lang_data_dict, validation_lang_data_dict)
+    # naive_bayes_model(lang_data_dict, validation_lang_data_dict)
+    # plot_confusion_matrix(validation_content, p)
+
+    vect, classifier = train_data(lang_data_dict)
+    valid_labels, valid_vect, predicted = predict(validation_lang_data_dict, vect, classifier)
+    show_stats(valid_labels, valid_vect, predicted, classifier)
+    print(count_probabilities(predicted))
