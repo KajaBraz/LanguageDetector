@@ -47,8 +47,8 @@ def show_stats(validation_labels, validation_vectors, predictions, naive_classif
     # print(res)
 
     # plt.figure()
-    # plot_confusion_matrix(naive_classifier, validation_vectors, predictions)
-    # plt.show()
+    plot_confusion_matrix(naive_classifier, validation_vectors, predictions)
+    plt.show()
 
 
 def count_probabilities(predictions):
@@ -59,7 +59,7 @@ def count_probabilities(predictions):
         else:
             occurrences[language] = 1
 
-    probabilities = {k: v / sum(list(occurrences.values())) for k, v in occurrences.items()}
+    probabilities = {k: 100 * v / sum(list(occurrences.values())) for k, v in occurrences.items()}
     return probabilities
 
 
