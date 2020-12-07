@@ -58,12 +58,13 @@ def count_probabilities(predictions):
 
 
 if __name__ == '__main__':
-    languages_data = [('ita', 'italian_data.txt'), ('en', 'english_data.txt'), ('pt', 'portuguese_data.txt')]
+    languages_data = [('ita', 'italian_data.txt'), ('en', 'english_data.txt'), ('pt', 'portuguese_data.txt'),
+                      ('pl', 'polish_data.txt')]
     lang_data = text_handling.prepare_data(languages_data)
     lang_data_dict = {}
 
     validation_languages_data = [('ita', 'italian_validation_data.txt'), ('en', 'english_validation_data.txt'),
-                                 ('pt', 'portuguese_validation_data.txt')]
+                                 ('pt', 'portuguese_validation_data.txt'), ('pl', 'polish_validation_data.txt')]
     validation_lang_data = text_handling.prepare_data(validation_languages_data)
     validation_lang_data_dict = {}
 
@@ -78,4 +79,3 @@ if __name__ == '__main__':
     vect, classifier = train_data(lang_data_dict)
     valid_labels, valid_vect, predicted = predict(validation_lang_data_dict, vect, classifier)
     show_stats(valid_labels, valid_vect, predicted, classifier)
-    # print(count_probabilities(predicted))
