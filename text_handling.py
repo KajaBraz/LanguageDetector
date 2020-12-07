@@ -12,10 +12,7 @@ def statistics(text: list) -> dict:
              'sample_extract': random.choice(text)}
     n = 0
     m = set()
-    # print(text)
     for sentence in text:
-        # print('>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-        # print(sentence)
         words = sentence.split(' ')
         n += len(words)
         m.update(words)
@@ -24,39 +21,23 @@ def statistics(text: list) -> dict:
     return stats
 
 
-def preprocess(text: list) -> list:
-    """Takes a list of strings. Removes from the text punctuation, numbers, and other special signs. Returns plain
-    text"""
-    l = []
+def preprocess(text: [str]) -> [str]:
+    preprocessed = []
     for sentence in text:
-        sentence = sentence.replace('/n', '').lower()
-        preprocessed = ''
-        for ch in sentence:
-            if ch.isalpha():
-                preprocessed += ch
-            else:
-                preprocessed += ' '
-        l.append(preprocessed)
+        sentence = sentence.strip().lower()
+        sentence = re.sub(r'[^\sa-z]+', '', sentence)
 
-    ll = []
-    for preprocessed in l:
-        preprocessed = re.sub(' +', ' ', preprocessed)
-        ll.append(preprocessed)
-
-    lll = []
-    for preprocessed in ll:
-        if preprocessed[0] == ' ':
-            preprocessed = preprocessed[1:]
-        if preprocessed and preprocessed[-1] == ' ':
-            preprocessed = preprocessed[:-1]
-        lll.append(preprocessed)
-
-    return lll
+        if len(sentence) != 0:
+            preprocessed.append(sentence)
+    return preprocessed
 
 
-def get_unique_words(text: str) -> set:
+def get_unique_words(text: [str]) -> set:
     words = ' '.join(text).split(' ')
-    return set(words)
+    all_words = set(words)
+    if '' in all_words:
+        all_words.remove('')
+    return all_words
 
 
 def prepare_data(data: list) -> dict:
@@ -71,20 +52,21 @@ def prepare_data(data: list) -> dict:
 if __name__ == '__main__':
     languages_data = [('ita', 'italian_data.txt'), ('en', 'english_data.txt'), ('pt', 'portuguese_data.txt')]
     lang_data = prepare_data(languages_data)
-    # print(lang_data['ita'])
-    # print(statistics(lang_data['ita']))
+    print(lang_data['ita'])
+    print(lang_data['en'])
 
     lang_data_dict = {}
     for data_lang, content in lang_data.items():
         lang_data_dict[data_lang] = preprocess(content)
-    print(lang_data_dict)
+    print(lang_data_dict['ita'])
+    print(lang_data_dict['en'])
 
-    # unique_words = {}
-    # for data_lang, content in lang_data_dict.items():
-    #     unique_words[data_lang] = get_unique_words(content)
-    # print(unique_words)
-    # print(len(unique_words['ita']))
-    #
+    unique_words = {}
+    for data_lang, content in lang_data_dict.items():
+        unique_words[data_lang] = get_unique_words(content)
+    print(unique_words)
+    print(len(unique_words['ita']))
+
     print('stats before')
     for l in lang_data.keys():
         print(statistics(lang_data[l]))
