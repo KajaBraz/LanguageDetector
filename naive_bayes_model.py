@@ -38,17 +38,11 @@ def predict(validation_data: dict, trained_vectorizer, naive_classifier):
     return validation_labels, validation_vectors, predictions
 
 
-# todo refactor and finish show_stats
 def show_stats(validation_labels, validation_vectors, predictions, naive_classifier):
     print('f1 score: ', f1_score(validation_labels, predictions, average='weighted'))
-
-    # res = confusion_matrix(validation_sentences, predictions)
-    # print('Resutls')
-    # print(res)
-
-    # plt.figure()
-    plot_confusion_matrix(naive_classifier, validation_vectors, predictions)
+    plot_confusion_matrix(naive_classifier, validation_vectors, validation_labels, normalize='true')
     plt.show()
+    plt.savefig('confusion_matrix.pdf')
 
 
 def count_probabilities(predictions):
@@ -68,7 +62,8 @@ if __name__ == '__main__':
     lang_data = text_handling.prepare_data(languages_data)
     lang_data_dict = {}
 
-    validation_languages_data = [('ita', 'italian_validation_data.txt')]
+    validation_languages_data = [('ita', 'italian_validation_data.txt'), ('en', 'english_validation_data.txt'),
+                                 ('pt', 'portuguese_validation_data.txt')]
     validation_lang_data = text_handling.prepare_data(validation_languages_data)
     validation_lang_data_dict = {}
 
@@ -80,10 +75,7 @@ if __name__ == '__main__':
         validation_lang_data_dict[validation_data_lang] = text_handling.preprocess(validation_content)
     # print(validation_lang_data_dict)
 
-    # naive_bayes_model(lang_data_dict, validation_lang_data_dict)
-    # plot_confusion_matrix(validation_content, p)
-
     vect, classifier = train_data(lang_data_dict)
     valid_labels, valid_vect, predicted = predict(validation_lang_data_dict, vect, classifier)
     show_stats(valid_labels, valid_vect, predicted, classifier)
-    print(count_probabilities(predicted))
+    # print(count_probabilities(predicted))
